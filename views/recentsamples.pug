@@ -1,0 +1,80 @@
+extends layout
+
+block content
+  div(class='row')
+    div(class='col-8')
+      h1 !{device_info.name}
+    div(class='col-3')
+      div(class='btn-group' role='group' aria-label='Time Period')
+        button(type='button' class='btn btn-secondary' onclick='window.location.replace("./60")') 1hr
+        button(type='button' class='btn btn-secondary' onclick='window.location.replace("./720")') 12hr
+        button(type='button' class='btn btn-secondary' onclick='window.location.replace("./1440")') 1d
+        button(type='button' class='btn btn-secondary' onclick='window.location.replace("./10080")') 7d
+        button(type='button' class='btn btn-secondary' onclick='window.location.replace("./43200")') 30d
+  div(class='row')
+    div(id='current_conditions',class='col-3')
+      h3 Current Conditions
+      h5 PM2.5 AQI:
+      div(class='row')
+        div(id='pmgauge' class='chart-medium')
+          script.
+            var current_data = !{current_data}
+            console.log(current_data)
+          script(src='/javascripts/d3_pmgauge.js')
+      h5 Temp:
+      div(class='row')
+        div(id='tempgauge' class='chart-medium')
+          script(src='/javascripts/d3_tempgauge.js')
+      h5 Humidity:
+      div(class='row')
+        div(id='humiditygauge' class='chart-medium')
+          script(src='/javascripts/d3_humiditygauge.js')
+      h5 Time since last sample:
+    div(class='col-8')
+      div(class='row')
+        h3 Trends
+        div(id='pmviz' class='chart-large')
+          script.
+            var d3_data = !{d3_data}.reverse()
+          script(src='/javascripts/d3_pmchart.js')
+      div(class='row')
+        div(id='tempviz' class='chart-large')
+          script(src='/javascripts/d3_tempchart.js')
+  div(class='row')
+    h3 Summary Stats
+  div(class='row')
+    if summary_stats.sample_count > 0
+      div(class='col')
+        h5 PM2.5 AQI
+        p
+          |Average: !{summary_stats.pm25aqi.avg}
+          br
+          |Lowest: !{summary_stats.pm25aqi.min}
+          br
+          |Highest: !{summary_stats.pm25aqi.max}
+      div(class='col')
+        h5 PM10 AQI
+        p
+          |Average: !{summary_stats.pm10aqi.avg}
+          br
+          |Lowest: !{summary_stats.pm10aqi.min}
+          br
+          |Highest: !{summary_stats.pm10aqi.max}
+      div(class='col')
+        h5 Temperature
+        p
+          |Average: !{summary_stats.temp.avg}
+          br
+          |Lowest:  !{summary_stats.temp.min}
+          br
+          |Highest: !{summary_stats.temp.max}
+      div(class='col')
+        h5 Humidity
+        p
+          |Average: !{summary_stats.humidity.avg}
+          br
+          |Lowest:  !{summary_stats.humidity.min}
+          br
+          |Highest: !{summary_stats.humidity.max}
+    else
+      h5 No data to summarize. Try increasing time period.

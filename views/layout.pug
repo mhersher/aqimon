@@ -1,0 +1,25 @@
+doctype html
+html(lang='en')
+  head
+    title= title
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js')
+    script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src='/javascripts/d3.js')
+  body
+    div(class='navbar navbar-expand-lg navbar-dark bg-dark')
+      a(class='navbar-brand',href='#') AQIMon
+      button(class='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarNavAltMarkup' aria-controls='navbarAltMarkup')
+        span(class='navbar-toggler-icon')
+      div(class='collapse navbar-collapse' id='navbarNavAltMarkup')
+        div(class='navbar-nav')
+          a(class='nav-link active' href='/tracker') Home
+            span(class='sr-only')
+          //a(class='nav-link' href='/tracker/devices') Devices
+          //a(class='nav-link' href='/tracker/sample/recent/60') Recent Samples
+    div(class='row')
+        div(class='container')
+          block content

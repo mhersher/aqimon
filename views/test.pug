@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  h1= title
+
+  div(id='viz')
+    -const d3_data = !{d3_data}
+    script(src='/javascripts/d3_testchart.js')
+    Test text

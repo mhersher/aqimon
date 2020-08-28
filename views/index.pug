@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to AQIMonitor
+
+  h2 Most recent data
+  p The most recent sample data is:
+
+  ul
+    li #[strong Measured At:] !{data.measurement_time_local}
+    li #[strong pm2.5 AQI:] !{data.pm25aqi}
+    li #[strong pm10 AQI:] !{data.pm10aqi}
+    li #[strong Temperature:] !{data.temp}C
+    li #[strong Humidity:] !{data.humidity}%
+
+  h2 Total lifetime data
+
+  ul
+    li #[strong Total Samples:] !{data.total_samples}
+    li #[strong Total Devices:] !{data.total_devices}
