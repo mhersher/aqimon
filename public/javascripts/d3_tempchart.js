@@ -19,7 +19,7 @@ const svg = d3.select("#tempviz").append("svg")
 //-----------------------------DATA-----------------------------//
 const timeConv = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
 const temp_dataset = d3_data
-temp_dataset.columns = ['measurement_time','temp_c','temp_f','humidity'];
+temp_dataset.columns = ['measurement_time','temp','humidity'];
     var slices = data.columns.slice(1).map(function(id) {
         return {
             id: id,

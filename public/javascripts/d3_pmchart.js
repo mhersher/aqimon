@@ -20,7 +20,7 @@ const svg = d3.select("#pmviz").append("svg")
 const timeConv = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
 const dataset = data
 //const dataset = linechart.reverse().forEach(element => element['measurement_time']=timeConv(element['measurement_time']))
-dataset.columns = ['measurement_time','PM2.5 AQI','PM10 AQI'];
+dataset.columns = ['measurement_time','pm25aqi','pm10aqi'];
     var slices = data.columns.slice(1).map(function(id) {
         return {
             id: id,
@@ -176,5 +176,3 @@ function mousemove_pm() {
           }
 
 };
-
-draw_pm_chart(d3_data)

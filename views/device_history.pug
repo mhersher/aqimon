@@ -1,0 +1,78 @@
+extends layout
+block prepend head
+  script.
+    var device_id = !{device_id};
+    var range = !{range};
+    var device_name = ''
+    var units = 'F'
+  script(src='/javascripts/aqi_from_pm.js')
+
+block content
+  div(class='row')
+    div(class='col')
+      h1(id='device_name')
+    div(class='col-1')
+      div(class='btn-group float-right ' role='group' aria-label='Temp Units')
+        button(id='tempc' type='button' class='btn btn-secondary' onclick='update_page(device_id,range, "C")') &deg;C
+        button(id='tempf' type='button' class='btn btn-secondary' onclick='update_page(device_id,range, "F")') &deg;F
+  div(class='row')
+    div(class='col-sm')
+      h5 PM2.5 AQI
+      p(id='pm25')
+    div(class='col-sm')
+      h5 PM10 AQI
+      p(id='pm10')
+    div(class='col-sm')
+      h5 Outside PM2.5*
+      p(id='pa_pm25')
+    div(class='col-sm')
+      h5 Outside PM10*
+      p(id='pa_pm10')
+  div(class='row')
+    div(class='col-sm')
+      h5 Temp
+      p(id='temp')
+    div(class='col-sm')
+      h5 Humidity
+      p(id='hum')
+    div(class='col-sm')
+      h5 Pressure*
+      p(id='pa_pres')
+    div(class='col-sm')
+      h5 Last Sample
+      p(id='last_sample')
+  div(class='row')
+      div(class='col')
+        h3 Trends
+      div(class='col')
+        div(class='btn-group float-right' role='group' aria-label='Time Period')
+          button(id='range60' type='button' class='btn btn-secondary' onclick='update_page(device_id,180,units)') 3hr
+          button(id='range720' type='button' class='btn btn-secondary' onclick='update_page(device_id,720,units)') 12hr
+          button(id='range1440' type='button' class='btn btn-secondary' onclick='update_page(device_id,1440,units)') 1d
+          button(id='range10080' type='button' class='btn btn-secondary' onclick='update_page(device_id,10080,units)') 7d
+          button(id='range43200' type='button' class='btn btn-secondary' onclick='update_page(device_id,43200,units)') 30d
+
+  div(class='row')
+      div(class='col-sm', id='pmviz')
+        script(src='/javascripts/d3_pmchart.js')
+      div(class='col-sm', id='tempviz')
+        script(src='/javascripts/d3_tempchart.js')
+
+  div(class='row')
+    h3 Summary Stats
+  div(class='row')
+    div(class='col')
+      h5 PM2.5 AQI
+      p(id='pm25meta')
+    div(class='col')
+      h5 PM10 AQI
+      p(id='pm10meta')
+    div(class='col')
+      h5 Temperature
+      p(id='tempmeta')
+    div(class='col')
+      h5 Humidity
+      p(id='hummeta')
+    script(src='/javascripts/device_history.js')
+  div(class='row float-right')
+    p *Outside data via PurpleAir

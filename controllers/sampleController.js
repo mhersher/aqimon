@@ -90,3 +90,30 @@ exports.sample_create = (req, res) => {
       });
     });
 };
+
+exports.samples_filtered = function(req, res) {
+  const device_id = req.params.id;
+  const range = req.params.range;
+
+  Sample.findAll(
+    {
+      attributes: { exclude: ['createdAt','updatedAt']},
+      where: {
+          [Op.and]: [
+            { device_id: device_id },
+            Sequelize.where(Sequelize.fn('timestampdiff',Sequelize.literal('MINUTE'), Sequelize.col('measurement_time'), Sequelize.fn("utc_timestamp")), {[Op.lte] : range})
+          ]
+      },
+      order: [['measurement_time','DESC']]
+  })
+  .then(data => {
+    console.log(data);
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Error occured while retrieving samples."
+    });
+  });
+};

@@ -32,6 +32,21 @@ module.exports = (sequelize, Sequelize) => {
     },
     humidity: {
       type: Sequelize.FLOAT().UNSIGNED
+    },
+    pa_pm25raw: {
+      type: Sequelize.FLOAT.UNSIGNED
+    },
+    pa_pm10raw: {
+      type: Sequelize.FLOAT.UNSIGNED
+    },
+    pa_temp: {
+      type: Sequelize.FLOAT()
+    },
+    pa_humidity: {
+      type: Sequelize.FLOAT().UNSIGNED
+    },
+    pa_pressure: {
+      type: Sequelize.FLOAT().UNSIGNED
     }
   },{underscored: true});
 

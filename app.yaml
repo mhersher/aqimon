@@ -1,5 +1,4 @@
 runtime: nodejs12
-
 handlers:
 - url: /.*
   script: auto

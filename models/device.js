@@ -24,6 +24,9 @@ module.exports = (sequelize, Sequelize) => {
     state: {
       type: Sequelize.STRING(2),
       allowNull: false
+    },
+    nearest_purpleair: {
+      type: Sequelize.STRING(30)
     }
   },{underscored: true});
 

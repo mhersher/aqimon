@@ -1,21 +1,52 @@
 extends layout
+block prepend head
+  script.
+    const devices_request = new Request('/api/devices', {method:'GET'});
+    initialize = function(json) {
+      var table = document.getElementById('device_table');
+      json.forEach((device) => {
+        var row = table.insertRow(-1);
+        var name = row.insertCell(0)
+        name.innerHTML = device.name
+        var recentsample = row.insertCell(1)
+        recentsample.innerHTML = device.sample_age
+        var aqi = row.insertCell(2)
+        aqi.innerHTML = device.pm25aqi
+        var temp = row.insertCell(3)
+        temp.innerHTML = device.temp
+        var humidity = row.insertCell(4)
+        humidity.innerHTML = device.temp
+        trend = row.insertCell(5)
+        trend.innerHTML = '<div class="btn-group" role="group" aria-label="Time Period"><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;/app/device/'+device.id+'/recent/180&quot;">3hr</button><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;./app/device/'+device.id+'/recent/720&quot;">12hr</button><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;./app/device/'+device.id+'/recent/1440&quot;">1d</button><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;./app/device/'+device.id+'/recent/10080&quot;">7d</button><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;./app/device/'+device.id+'/recent/43200&quot;">30d</button></div>'
+        console.log(device);
+      });
+    }
+    fetch(devices_request)
+    .then(response => {
+      if (response.status === 200) {
+      return response.json();
+      } else {
+        throw new Error('Error in API request');
+      }
+      })
+      .then(response => {
+        console.log(response)
+        var json = response
+        initialize(response);
 
+      })
+      .catch(error => {
+        console.error(error);
+      });
 block content
-  h1= title
-  p Welcome to AQIMonitor
-
-  h2 Most recent data
-  p The most recent sample data is:
-
-  ul
-    li #[strong Measured At:] !{data.measurement_time_local}
-    li #[strong pm2.5 AQI:] !{data.pm25aqi}
-    li #[strong pm10 AQI:] !{data.pm10aqi}
-    li #[strong Temperature:] !{data.temp}C
-    li #[strong Humidity:] !{data.humidity}%
-
-  h2 Total lifetime data
-
-  ul
-    li #[strong Total Samples:] !{data.total_samples}
-    li #[strong Total Devices:] !{data.total_devices}
+  div(class='row')
+    h3 All Sensors
+    div(class='row')
+      table(class='table table-hover', id='device_table')
+        tr
+          th Name
+          th Most Recent Sample
+          th AQI
+          th Temp
+          th Humidity
+          th Trend
