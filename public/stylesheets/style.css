@@ -90,3 +90,48 @@ path.line-2 {
 .gauge-background {
   fill: #cccccc
 }
+
+.alert-moderate {
+  background-color:yellow;
+  color:#000;
+}
+
+.alert-usg {
+  background-color:rgb(255,126,0);
+  color:#fff;
+}
+
+.alert-unhealthy {
+  background-color:red;
+  color:#fff;
+}
+
+.alert-veryunhealthy {
+  background-color:rgb(143,63,151);
+  color:#fff;
+}
+
+.alert-hazardous {
+  background-color:rgb(126,0,35);
+  color:#fff;
+}
+
+.text-moderate {
+  color:rgb(230,200,0);
+}
+
+.text-usg {
+  color:rgb(255,126,0);
+}
+
+.text-unhealthy {
+  color:red;
+}
+
+.text-veryunhealthy {
+  color:rgb(143,63,151);
+}
+
+.text-hazardous {
+  color:rgb(126,0,35);
+}

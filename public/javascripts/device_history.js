@@ -9,10 +9,11 @@ var pa_pm25 = document.getElementById('pa_pm25');
 var pa_pm10 = document.getElementById('pa_pm10');
 var pa_pres = document.getElementById('pa_pres');
 var last_sample = document.getElementById('last_sample');
-
+var alerts = document.getElementById('alerts')
 device_name.innerHTML = json.name
 pm25.innerHTML = json.pm25aqi
 pm10.innerHTML = json.pm10aqi
+
 if (units == 'C') {
   temp.innerHTML = json.temp+'\u00B0'+units
 }
@@ -20,11 +21,80 @@ else {
   temp.innerHTML = Math.round(json.temp*9/5+32)+'\u00B0'+units
 }
 hum.innerHTML = json.humidity + '%'
-pa_pm25.innerHTML = aqiFromPM25(json.pa_pm25raw)
+if (epa_smoke_corrections == 1) {
+  var pa_pm25_value=epaPMCorrection(json.pa_pm25raw, json.pa_humidity,json.pa_temp)
+} else {
+  var pa_pm25_value=json.pa_pm25raw
+}
+const pa_pm25aqi = aqiFromPM25(pa_pm25_value)
+console.log(pa_pm25_value, pa_pm25aqi)
+pa_pm25.innerHTML = pa_pm25aqi
 pa_pm10.innerHTML = aqiFromPM10(json.pa_pm10raw)
 pa_pres.innerHTML = Math.round(json.pa_pressure) + ' mbar'
 last_sample.innerHTML = json.sample_age
+//Indoor AQI Alerts
+const indoor_aqi_message = getAQIMessage(json.pm25aqi)
+const indoor_aqi_description = getAQIDescription(json.pm25aqi)
+if (document.getElementById('indoorpmalert')) {
+  console.log('indoorpmalertexists')
+  document.getElementById('indoorpmalert').remove()
+}
+if (json.pm25aqi > 100) {
+  alerts.innerHTML = '<div id="indoorpmalert" role="alert">Indoor air quality is <strong>'+indoor_aqi_description+'</strong>: '+indoor_aqi_message+'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+  var indoorpmalert = document.getElementById('indoorpmalert')
+}
+if (json.pm25aqi > 300) {
+  indoorpmalert.className = 'alert alert-hazardous alert-dismissible fade show'
+  pm25.className = 'text-hazardous'
+}
+else if (json.pm25aqi > 200) {
+  indoorpmalert.className = 'alert alert-veryunhealthy alert-dismissible fade show'
+  pm25.className = 'text-veryunhealthy'
+}
+else if (json.pm25aqi > 150) {
+  indoorpmalert.className = 'alert alert-unhealthy alert-dismissible fade show'
+  pm25.className = 'text-unhealthy'
+}
+else if (json.pm25aqi > 100) {
+  indoorpmalert.className = 'alert alert-usg alert-dismissible fade show'
+  pm25.className = 'text-usg'
+}
+else if (json.pm25aqi > 50) {
+  pm25.className = 'text-moderate'
+}
+else {
+  pm25.className = 'text-healthy'
+}
+
+//Outdoor AQI Alerts
+const outdoor_aqi_message = getAQIMessage(pa_pm25aqi)
+const outdoor_aqi_description = getAQIDescription(pa_pm25aqi)
+if (document.getElementById('outdoorpmalert')) {
+  console.log(document.getElementById('outdoorpmalert'))
+  document.getElementById('outdoorpmalert').remove()
+}
+if (pa_pm25aqi > 100) {
+  alerts.innerHTML += '<div id="outdoorpmalert" role="alert">Outdoor air quality is <strong>'+outdoor_aqi_description+'</strong>: '+outdoor_aqi_message+'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+  var outdoorpmalert = document.getElementById('outdoorpmalert')
+}
+if (pa_pm25aqi > 300) {
+  outdoorpmalert.className = 'alert alert-hazardous alert-dismissible fade show'
+  pa_pm25.className = 'text-hazardous'
+}
+else if (pa_pm25aqi > 200) {
+  outdoorpmalert.className = 'alert alert-veryunhealthy alert-dismissible fade show'
+  pa_pm25.className = 'text-veryunhealthy'
+}
+else if (pa_pm25aqi > 150) {
+  outdoorpmalert.className = 'alert alert-unhealthy alert-dismissible fade show'
+  pa_pm25.className = 'text-unhealthy'
+}
+else if (pa_pm25aqi > 100) {
+  outdoorpmalert.className = 'alert alert-usg alert-dismissible fade show'
+  pa_pm25.className = 'text-usg'
+}
 };
+
 
 //Fill summary stats at bottom of page
 update_sample_meta = function(json) {
@@ -46,7 +116,6 @@ update_sample_meta = function(json) {
 
 //Fill charts in middle of page
 update_charts = function(json) {
-  console.log('chart update')
   d3_data = json
   document.getElementById('pmviz').innerHTML = ''
   draw_pm_chart(d3_data)
@@ -55,10 +124,12 @@ update_charts = function(json) {
 }
 
 //Run main update to fetch new data.
-update_page = function(new_device_id = device_id, new_range = range, new_units = units) {
+update_page = function(new_device_id = device_id, new_range = range, new_units = units, new_epa_smoke_corrections = epa_smoke_corrections) {
   const previous_range = range
   const previous_device_id = device_id
   const previous_units = units
+  const previous_epa_smoke_corrections = epa_smoke_corrections
+  epa_smoke_corrections = new_epa_smoke_corrections
   device_id = new_device_id
   range = new_range
   units = new_units
@@ -123,6 +194,15 @@ update_page = function(new_device_id = device_id, new_range = range, new_units =
     previous_range_button.className = previous_range_button.className.replace(' active', '')
     new_range_button = document.getElementById('range'+new_range)
     new_range_button.className = new_range_button.className.replace(' active', '')+ ' active'
+    smoke_on_button = document.getElementById('smoke_on')
+    smoke_off_button = document.getElementById('smoke_off')
+    if (epa_smoke_corrections == 1) {
+      smoke_on_button.className = unit_c_button.className.replace(' active','')+ ' active'
+      smoke_off_button.className = unit_f_button.className.replace(' active','')
+    } else {
+      smoke_off_button.className = unit_c_button.className.replace(' active','')+ ' active'
+      smoke_on_button.className = unit_f_button.className.replace(' active','')
+    }
     history.pushState(0,device_name,'/app/device/'+device_id+'/recent/'+range);
 }
 

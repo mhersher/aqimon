@@ -5,16 +5,32 @@ block prepend head
     var range = !{range};
     var device_name = ''
     var units = 'F'
+    var epa_smoke_corrections = 1
+    var initial_load = 1
   script(src='/javascripts/aqi_from_pm.js')
 
 block content
+  div(id='alerts')
   div(class='row')
     div(class='col')
       h1(id='device_name')
-    div(class='col-1')
+  div(class='row')
       div(class='btn-group float-right ' role='group' aria-label='Temp Units')
-        button(id='tempc' type='button' class='btn btn-secondary' onclick='update_page(device_id,range, "C")') &deg;C
-        button(id='tempf' type='button' class='btn btn-secondary' onclick='update_page(device_id,range, "F")') &deg;F
+          button(type='button' class='btn btn-secondary' disabled) Temp Units
+          button(id='tempc' type='button' class='btn btn-secondary' onclick='update_page(device_id,range, "C")') &deg;C
+          button(id='tempf' type='button' class='btn btn-secondary' onclick='update_page(device_id,range, "F")') &deg;F
+      div(class='btn-group float-right ' role='group' aria-label='EPA Smoke Corrections')
+          button(type='button' class='btn btn-secondary' disabled) EPA Smoke Corrections
+          button(id='smoke_on' type='button' class='btn btn-secondary' onclick='update_page(device_id,range,units,1)') On
+          button(id='smoke_off' type='button' class='btn btn-secondary' onclick='update_page(device_id,range,units,0)') Off
+      div(class='btn-group float-right' role='group' aria-label='Time Period')
+        button(type='button' class='btn btn-secondary' disabled) Time Range
+        button(id='range180' type='button' class='btn btn-secondary' onclick='update_page(device_id,180)') 3hr
+        button(id='range720' type='button' class='btn btn-secondary' onclick='update_page(device_id,720)') 12hr
+        button(id='range1440' type='button' class='btn btn-secondary' onclick='update_page(device_id,1440)') 1d
+        button(id='range10080' type='button' class='btn btn-secondary' onclick='update_page(device_id,10080)') 7d
+        button(id='range43200' type='button' class='btn btn-secondary' onclick='update_page(device_id,43200)') 30d
+
   div(class='row')
     div(class='col-sm')
       h5 PM2.5 AQI
@@ -44,14 +60,6 @@ block content
   div(class='row')
       div(class='col')
         h3 Trends
-      div(class='col')
-        div(class='btn-group float-right' role='group' aria-label='Time Period')
-          button(id='range60' type='button' class='btn btn-secondary' onclick='update_page(device_id,180,units)') 3hr
-          button(id='range720' type='button' class='btn btn-secondary' onclick='update_page(device_id,720,units)') 12hr
-          button(id='range1440' type='button' class='btn btn-secondary' onclick='update_page(device_id,1440,units)') 1d
-          button(id='range10080' type='button' class='btn btn-secondary' onclick='update_page(device_id,10080,units)') 7d
-          button(id='range43200' type='button' class='btn btn-secondary' onclick='update_page(device_id,43200,units)') 30d
-
   div(class='row')
       div(class='col-sm', id='pmviz')
         script(src='/javascripts/d3_pmchart.js')

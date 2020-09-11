@@ -344,6 +344,8 @@ exports.device_details = function(req,res) {
         'pa_pm10raw':sample.pa_pm10raw,
         'pa_pm25raw':sample.pa_pm25raw,
         'pa_pressure':sample.pa_pressure,
+        'pa_temp':sample.pa_temp,
+        'pa_humidity':sample.pa_humidity,
         'temp':Math.round(sample.temp),
         'humidity':Math.round(sample.humidity),
         'last_sample_time':sample.measurement_time.toISOString(),
