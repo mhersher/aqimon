@@ -23,15 +23,15 @@ function aqiFromPM10(pm) {
   if (pm == undefined) return "-";
   if (pm < 0) return pm;
   if (pm > 1000) return "-";
-  if (pm>250.5) {
+  if (pm>426) {
     return calcAQI(pm, 500, 301,604,425)
-  } else if (pm>150.5) {
+  } else if (pm>356) {
     return calcAQI(pm,300,201,424,355)
-  } else if (pm>55.5) {
+  } else if (pm>256) {
     return calcAQI(pm,200,151,354,255)
-  } else if (pm>35.5) {
+  } else if (pm>156) {
     return calcAQI(pm, 150,101,254,155)
-  } else if (pm>12.1) {
+  } else if (pm>56) {
     return calcAQI(pm, 100,51,154,55)
   } else if (pm>=0) {
     return calcAQI(pm, 50, 0 ,54, 0)
@@ -39,6 +39,9 @@ function aqiFromPM10(pm) {
 }
 
 function epaPMCorrection(pm,rh,temp) {
+  if (isNaN(pm)) return null;
+  if (pm == undefined) return null;
+  if (pm == 0) return null;
   corrected_pm = 0.541*pm-0.0618*rh +0.00534*temp +3.634
   return corrected_pm
 }
@@ -50,6 +53,26 @@ function calcAQI(Cp, Ih, Il, BPh, BPl) {
   var c = (Cp - BPl);
   return Math.round((a/b) * c + Il);
 
+}
+
+function colorFromAQI(aqi) {
+  if (isNaN(aqi)) return "black";
+  if (aqi == undefined) return "black";
+  if (aqi == 0) {
+    return "black";
+  } else if (aqi <= 50) {
+    return "green"
+  } else if (aqi <= 100) {
+    return "rgb(230,200,0)"
+  } else if (aqi <= 150) {
+    return "rgb(255,126,0)"
+  } else if (aqi <= 200) {
+    return "red"
+  } else if (aqi <= 300) {
+    return "rgb(143,63,151)"
+  } else {
+    return "rgb(126,0,35)"
+  }
 }
 
 

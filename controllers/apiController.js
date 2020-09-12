@@ -238,6 +238,8 @@ exports.devices = function(req,res) {
             'humidity':Math.round(record.dataValues.humidity),
             'pa_pm10raw':record.dataValues.pa_pm10raw,
             'pa_pm25raw':record.dataValues.pa_pm25raw,
+            'pm25raw':record.dataValues.pm25raw,
+            'pm10raw':record.dataValues.pm10raw,
             'pa_pressure':record.dataValues.pa_pressure,
             'last_sample_time':record.dataValues.measurement_time.toISOString(),
             'sample_age': formatTimeDiff(Math.abs(Date.now() - record.dataValues.measurement_time))
@@ -341,6 +343,8 @@ exports.device_details = function(req,res) {
         'indoors':sample.device.indoors,
         'pm25aqi':sample.pm25aqi,
         'pm10aqi':sample.pm10aqi,
+        'pm25raw':sample.pm25raw,
+        'pm10raw':sample.pm10raw,
         'pa_pm10raw':sample.pa_pm10raw,
         'pa_pm25raw':sample.pa_pm25raw,
         'pa_pressure':sample.pa_pressure,

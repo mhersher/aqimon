@@ -7,14 +7,16 @@ block prepend head
     var units = 'F'
     var epa_smoke_corrections = 1
     var initial_load = 1
+    var chart_selection = 'PM2.5'
   script(src='/javascripts/aqi_from_pm.js')
+  script(src='/javascripts/d3_pmchart2.js')
 
 block content
-  div(id='alerts')
   div(class='row')
     div(class='col')
       h1(id='device_name')
-  div(class='row')
+  div(class = 'row' id='alerts')
+  div(class='btn-toolbar')
       div(class='btn-group float-right ' role='group' aria-label='Temp Units')
           button(type='button' class='btn btn-secondary' disabled) Temp Units
           button(id='tempc' type='button' class='btn btn-secondary' onclick='update_page(device_id,range, "C")') &deg;C
@@ -23,6 +25,12 @@ block content
           button(type='button' class='btn btn-secondary' disabled) EPA Smoke Corrections
           button(id='smoke_on' type='button' class='btn btn-secondary' onclick='update_page(device_id,range,units,1)') On
           button(id='smoke_off' type='button' class='btn btn-secondary' onclick='update_page(device_id,range,units,0)') Off
+      div(class='btn-group float-right ' role='group' aria-label='PM Chart')
+          button(type='button' class='btn btn-secondary' disabled) Linechart
+          button(id='chart_pm25' type='button' class='btn btn-secondary' onclick='update_pm_chart(d3_data,"PM2.5")') PM2.5
+          button(id='chart_pm10' type='button' class='btn btn-secondary' onclick='update_pm_chart(d3_data,"PM10")') PM10
+          button(id='chart_pm25' type='button' class='btn btn-secondary' onclick='update_pm_chart(d3_data,"Temp")') Temp
+          button(id='chart_pm10' type='button' class='btn btn-secondary' onclick='update_pm_chart(d3_data,"Hum")') Humidity
       div(class='btn-group float-right' role='group' aria-label='Time Period')
         button(type='button' class='btn btn-secondary' disabled) Time Range
         button(id='range180' type='button' class='btn btn-secondary' onclick='update_page(device_id,180)') 3hr
@@ -61,10 +69,8 @@ block content
       div(class='col')
         h3 Trends
   div(class='row')
-      div(class='col-sm', id='pmviz')
-        script(src='/javascripts/d3_pmchart.js')
-      div(class='col-sm', id='tempviz')
-        script(src='/javascripts/d3_tempchart.js')
+      div(class='col', id='pmviz')
+        //script(src='/javascripts/d3_pmchart.js')
 
   div(class='row')
     h3 Summary Stats

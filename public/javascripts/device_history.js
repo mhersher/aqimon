@@ -11,8 +11,9 @@ var pa_pres = document.getElementById('pa_pres');
 var last_sample = document.getElementById('last_sample');
 var alerts = document.getElementById('alerts')
 device_name.innerHTML = json.name
-pm25.innerHTML = json.pm25aqi
-pm10.innerHTML = json.pm10aqi
+console.log(json)
+pm25.innerHTML = aqiFromPM25(json.pm25raw)
+pm10.innerHTML = aqiFromPM10(json.pm10raw)
 
 if (units == 'C') {
   temp.innerHTML = json.temp+'\u00B0'+units
@@ -27,16 +28,20 @@ if (epa_smoke_corrections == 1) {
   var pa_pm25_value=json.pa_pm25raw
 }
 const pa_pm25aqi = aqiFromPM25(pa_pm25_value)
-console.log(pa_pm25_value, pa_pm25aqi)
 pa_pm25.innerHTML = pa_pm25aqi
 pa_pm10.innerHTML = aqiFromPM10(json.pa_pm10raw)
+
+pa_pm25.style.color = colorFromAQI(pa_pm25aqi)
+pa_pm10.style.color = colorFromAQI(aqiFromPM10(json.pa_pm10raw))
+pm10.style.color = colorFromAQI(aqiFromPM10(json.pm10raw))
+pm25.style.color = colorFromAQI(aqiFromPM25(json.pm25raw));
+
 pa_pres.innerHTML = Math.round(json.pa_pressure) + ' mbar'
 last_sample.innerHTML = json.sample_age
 //Indoor AQI Alerts
 const indoor_aqi_message = getAQIMessage(json.pm25aqi)
 const indoor_aqi_description = getAQIDescription(json.pm25aqi)
 if (document.getElementById('indoorpmalert')) {
-  console.log('indoorpmalertexists')
   document.getElementById('indoorpmalert').remove()
 }
 if (json.pm25aqi > 100) {
@@ -45,32 +50,21 @@ if (json.pm25aqi > 100) {
 }
 if (json.pm25aqi > 300) {
   indoorpmalert.className = 'alert alert-hazardous alert-dismissible fade show'
-  pm25.className = 'text-hazardous'
 }
 else if (json.pm25aqi > 200) {
   indoorpmalert.className = 'alert alert-veryunhealthy alert-dismissible fade show'
-  pm25.className = 'text-veryunhealthy'
 }
 else if (json.pm25aqi > 150) {
   indoorpmalert.className = 'alert alert-unhealthy alert-dismissible fade show'
-  pm25.className = 'text-unhealthy'
 }
 else if (json.pm25aqi > 100) {
   indoorpmalert.className = 'alert alert-usg alert-dismissible fade show'
-  pm25.className = 'text-usg'
-}
-else if (json.pm25aqi > 50) {
-  pm25.className = 'text-moderate'
-}
-else {
-  pm25.className = 'text-healthy'
 }
 
 //Outdoor AQI Alerts
 const outdoor_aqi_message = getAQIMessage(pa_pm25aqi)
 const outdoor_aqi_description = getAQIDescription(pa_pm25aqi)
 if (document.getElementById('outdoorpmalert')) {
-  console.log(document.getElementById('outdoorpmalert'))
   document.getElementById('outdoorpmalert').remove()
 }
 if (pa_pm25aqi > 100) {
@@ -79,19 +73,15 @@ if (pa_pm25aqi > 100) {
 }
 if (pa_pm25aqi > 300) {
   outdoorpmalert.className = 'alert alert-hazardous alert-dismissible fade show'
-  pa_pm25.className = 'text-hazardous'
 }
 else if (pa_pm25aqi > 200) {
   outdoorpmalert.className = 'alert alert-veryunhealthy alert-dismissible fade show'
-  pa_pm25.className = 'text-veryunhealthy'
 }
 else if (pa_pm25aqi > 150) {
   outdoorpmalert.className = 'alert alert-unhealthy alert-dismissible fade show'
-  pa_pm25.className = 'text-unhealthy'
 }
 else if (pa_pm25aqi > 100) {
   outdoorpmalert.className = 'alert alert-usg alert-dismissible fade show'
-  pa_pm25.className = 'text-usg'
 }
 };
 
@@ -118,9 +108,9 @@ update_sample_meta = function(json) {
 update_charts = function(json) {
   d3_data = json
   document.getElementById('pmviz').innerHTML = ''
-  draw_pm_chart(d3_data)
-  document.getElementById('tempviz').innerHTML = ''
-  draw_temp_chart(d3_data)
+  //draw_pm_chart(d3_data)
+  draw_pm_chart2(d3_data,chart_selection)
+  //draw_temp_chart(d3_data)
 }
 
 //Run main update to fetch new data.
