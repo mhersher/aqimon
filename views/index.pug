@@ -7,17 +7,17 @@ block prepend head
       json.forEach((device) => {
         var row = table.insertRow(-1);
         var name = row.insertCell(0)
-        name.innerHTML = device.name
+        name.innerHTML = '<a href=device/'+device.id+'>'+device.name+'</a>'
         var recentsample = row.insertCell(1)
         recentsample.innerHTML = device.sample_age
         var aqi = row.insertCell(2)
         aqi.innerHTML = device.pm25aqi
         var temp = row.insertCell(3)
-        temp.innerHTML = device.temp
+        temp.innerHTML = Math.round(device.temp*9/5+32)+'\u00B0'+'F'
         var humidity = row.insertCell(4)
-        humidity.innerHTML = device.temp
+        humidity.innerHTML = device.humidity+'%'
         trend = row.insertCell(5)
-        trend.innerHTML = '<div class="btn-group" role="group" aria-label="Time Period"><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;/app/device/'+device.id+'/recent/180&quot;">3hr</button><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;./app/device/'+device.id+'/recent/720&quot;">12hr</button><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;./app/device/'+device.id+'/recent/1440&quot;">1d</button><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;./app/device/'+device.id+'/recent/10080&quot;">7d</button><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;./app/device/'+device.id+'/recent/43200&quot;">30d</button></div>'
+        trend.innerHTML = '<div class="btn-group" role="group" aria-label="Time Period"><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;/app/device/'+device.id+'/recent/180&quot;">3hr</button><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;/app/device/'+device.id+'/recent/720&quot;">12hr</button><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;/app/device/'+device.id+'/recent/1440&quot;">1d</button><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;/app/device/'+device.id+'/recent/10080&quot;">7d</button><button class="btn btn-secondary" type="button" onclick="window.location.href = &quot;/app/device/'+device.id+'/recent/43200&quot;">30d</button></div>'
         console.log(device);
       });
     }
@@ -38,15 +38,17 @@ block prepend head
       .catch(error => {
         console.error(error);
       });
+
+
 block content
   div(class='row')
     h3 All Sensors
-    div(class='row')
-      table(class='table table-hover', id='device_table')
-        tr
-          th Name
-          th Most Recent Sample
-          th AQI
-          th Temp
-          th Humidity
-          th Trend
+  div(class='row')
+    table(class='table table-hover', id='device_table')
+      tr
+        th Name
+        th Most Recent Sample
+        th AQI
+        th Temp
+        th Humidity
+        th Trend

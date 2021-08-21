@@ -11,16 +11,25 @@ html(lang='en')
     script(src='/javascripts/d3.js')
     block head
   body
-    div(class='navbar navbar-expand-lg navbar-dark bg-dark')
-      a(class='navbar-brand',href='/app') AQIMon
-      button(class='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarNavAltMarkup' aria-controls='navbarAltMarkup')
-        span(class='navbar-toggler-icon')
-      div(class='collapse navbar-collapse' id='navbarNavAltMarkup')
-        div(class='navbar-nav')
-          a(class='nav-link active' href='/app') Home
-            span(class='sr-only')
-          //a(class='nav-link' href='/tracker/devices') Devices
-          //a(class='nav-link' href='/tracker/sample/recent/60') Recent Samples
-    div(class='row')
-        div(class='container')
-          block content
+    nav(class='navbar navbar-expand-sm navbar-light bg-light')
+      a(class='navbar-brand mr-auto' href='/app') Hades
+      ul(class='navbar-nav')
+        if locals.user
+          li(class='nav-item')
+            a(class='nav-link' href='/app/user') Profile
+          li(class='nav-item')
+            a(class='nav-link' href='/auth/logout') Log Out
+        else
+          li(class='nav-item')
+            a(class='nav-link' href='/auth/login') Log In
+    block breadcrumb
+    div(class='container')
+      block content
+    nav(class='navbar navbar-expand-sm navbar-light bg-light')
+      ul(class='navbar-nav')
+        li(class='nav-item')
+          span(class='navbar-text') A 2020 Pandemic/Wildfires/Heatwave Project
+        li(class='nav-item')
+          a(class='nav-link' href='https://github.com/mhersher/aqimon') GitHub
+        li(class='nav-item')
+          a(class='nav-link' href='https://github.com/mhersher/aqmonitor') Sample Meter

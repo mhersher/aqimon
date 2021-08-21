@@ -1,6 +1,8 @@
 var db = require("../models");
 var Device = db.devices;
 var Sample = db.samples;
+var Subscription = db.subscriptions;
+var User = db.users;
 var Op = db.Sequelize.Op;
 var Sequelize = db.Sequelize;
 var async = require('async');
@@ -26,6 +28,9 @@ function getPurpleAirData(device_id) {
     Device.findByPk(device_id)
     .then(data => {
       const pa_devices = JSON.parse(data.dataValues.nearest_purpleair);
+      if (pa_devices = null) {
+        reject('No PA Devices');
+      }
       const purpleair_url = 'https://www.purpleair.com/json?show='+pa_devices.join('|')
       axios.get(purpleair_url)
       .then(function (response) {
@@ -139,13 +144,15 @@ exports.samples_meta = function(req,res) {
     raw_values.pm10aqi = []
     raw_values.temp = []
     raw_values.humidity = [];
+    raw_values.measurement_time = []
     data.forEach(
       (sample) => {
-          measurement_time_string = sample.dataValues.measurement_time.toISOString()
+          //measurement_time_string = sample.dataValues.measurement_time.toISOString()
           pm25aqi = sample.dataValues.pm25aqi
           pm10aqi = sample.dataValues.pm10aqi
           temp = sample.dataValues.temp
           humidity = sample.dataValues.humidity
+          raw_values.measurement_time.push(sample.dataValues.measurement_time)
           raw_values.pm25aqi.push(pm25aqi)
           raw_values.pm10aqi.push(pm10aqi)
           raw_values.temp.push(temp)
@@ -157,8 +164,13 @@ exports.samples_meta = function(req,res) {
     meta.pm25aqi = {}
     meta.temp = {}
     meta.humidity = {}
+    meta.measurement_time = {}
     meta.sample_count = raw_values.pm25aqi.length;
     if (raw_values.pm25aqi.length > 0) {
+      first_measurement =  Math.min(...raw_values.measurement_time)
+      last_measurement = Math.max(...raw_values.measurement_time)
+      meta.measurement_time.min = first_measurement
+      meta.measurement_time.max = last_measurement
       meta.pm10aqi.min = Math.min(...raw_values.pm10aqi)
       meta.pm10aqi.max = Math.max(...raw_values.pm10aqi)
       meta.pm10aqi.avg = Math.round(raw_values.pm10aqi.reduce(function(a,b) { return a+b })/raw_values.pm10aqi.length)
@@ -374,3 +386,166 @@ exports.device_details = function(req,res) {
     */
 
 };
+
+exports.new_subscription = function(req,res) {
+  const { _raw, _json, ...userProfile } = req.user;
+  var user_email = userProfile.emails[0].value;
+  var threshold;
+  var onincrease = false;
+  var ondecrease = false;
+  var device_id;
+  if (req.body.device_id) {
+    device_id = req.body.device_id
+  } else {
+    console.log('No device ID error.')
+    res.status(500).send({
+      message:
+        err.message || "Invalid device id"
+    })
+  }
+  if (req.body.onincrease) {
+    onincrease = true
+  }
+  if (req.body.ondecrease) {
+    ondecrease = true
+  }
+  if (req.body.threshold == 'Moderate') {
+    threshold = 50
+  } else if (req.body.threshold == 'Unhealthy for Sensitive Groups') {
+    threshold = 100
+  } else if (req.body.threshold == 'Unhealthy') {
+    threshold = 150
+  } else if (req.body.threshold == 'Hazardous') {
+    threshold = 200
+  } else {
+    threshold = Null
+  }
+  if (onincrease == false && ondecrease == false) {
+    res.send('No alert requested')
+  }
+  const subscription = {
+    device_id:device_id,
+    metric: req.body.metric,
+    user_email:user_email,
+    increasing:onincrease,
+    decreasing:ondecrease,
+    threshold:threshold
+  };
+  Subscription.create(subscription)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).send({
+        message:
+          err.message || "An error occurred while creating the subscription. Subscription not saved."})})
+}
+
+exports.subscriptions = function(req,res) {
+  const { _raw, _json, ...userProfile } = req.user;
+  var user_email = userProfile.emails[0].value;
+  var subscription_filter;
+  if (req.params.device_id == undefined) {
+      console.log('No device id - returning all devices')
+      subscription_filter = {
+        user_email: user_email
+      }
+  } else {
+    const device_id = req.params.device_id
+    subscription_filter = {
+      user_email: user_email,
+      device_id: device_id
+    }
+  }
+  Subscription.findAll({
+    include: [{
+      model:Device
+    }],
+    where: subscription_filter
+  })
+  .then(data => {
+    res.send(data)
+  })
+  .catch(err => {
+      console.log(err)
+      res.status(500).send({
+        message:
+          err.message || "An error occurred while getting subscriptions."})
+  })
+}
+
+exports.delete_subscription = function(req,res) {
+  const { _raw, _json, ...userProfile } = req.user;
+  var user_email = userProfile.emails[0].value;
+  var subscription_id = req.params.subscription_id;
+  Subscription.findByPk(subscription_id)
+    .then(data => {
+      if (data.dataValues.user_email == user_email) {
+        console.log('Deleting')
+        Subscription.destroy({
+          where: {id: subscription_id}
+        })
+        .then(data => {
+          console.log(data)
+          res.status(200).send();
+        })
+        .catch(err => {
+          console.log(err)
+          res.status(500).send();
+        })
+      } else {
+        console.log('No deleting subscriptions for another user')
+        res.status(401).send();
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error retrieving subscription with id " + subscription_id
+      });
+    });
+}
+
+exports.new_profile = function(req,res) {
+  const { _raw, _json, ...userProfile } = req.user;
+  var user_email = userProfile.emails[0].value;
+  const profile = {
+    email:user_email,
+    first_name:req.body.first_name,
+    last_name:req.body.last_name,
+    phone_country_code:req.body.country_code,
+    phone_phone_number:req.body.phone_number,
+    units:req.body.units
+  };
+  console.log(profile);
+  User.create(profile)
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).send({
+      message:
+        err.message || "An error occurred while creating the profile. Subscription not saved."})
+      })
+
+}
+
+exports.profile = function(req,res) {
+  const { _raw, _json, ...userProfile } = req.user;
+  var user_email = userProfile.emails[0].value;
+  User.findByPk(user_email)
+    .then(data => {
+      console.log(data);
+      res.send(data)
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error retrieving profile"
+      });
+    });
+}
+
+exports.update_profile = function(req,res) {
+  console.log('Not yet implemented')
+}

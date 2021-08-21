@@ -7,21 +7,25 @@ var temp = document.getElementById('temp');
 var hum = document.getElementById('hum');
 var pa_pm25 = document.getElementById('pa_pm25');
 var pa_pm10 = document.getElementById('pa_pm10');
-var pa_pres = document.getElementById('pa_pres');
-var last_sample = document.getElementById('last_sample');
-var alerts = document.getElementById('alerts')
+var pa_temp = document.getElementById('pa_temp');
+var pa_hum = document.getElementById('pa_hum');
+var alerts = document.getElementById('alerts');
+var as_of = document.getElementById('as_of_time');
 device_name.innerHTML = json.name
-console.log(json)
+as_of.innerHTML = 'Last sample: <br />'+Date(json.measurement_time).substring(16,21)+' ('+json.sample_age+')'
 pm25.innerHTML = aqiFromPM25(json.pm25raw)
 pm10.innerHTML = aqiFromPM10(json.pm10raw)
 
 if (units == 'C') {
   temp.innerHTML = json.temp+'\u00B0'+units
+  pa_temp.innerHTML = Math.round(json.pa_temp)+'\u00B0'+units
 }
 else {
   temp.innerHTML = Math.round(json.temp*9/5+32)+'\u00B0'+units
+  pa_temp.innerHTML = Math.round(json.pa_temp*9/5+32)+'\u00B0'+units
 }
 hum.innerHTML = json.humidity + '%'
+pa_hum.innerHTML = Math.round(json.pa_humidity)+'%'
 if (epa_smoke_corrections == 1) {
   var pa_pm25_value=epaPMCorrection(json.pa_pm25raw, json.pa_humidity,json.pa_temp)
 } else {
@@ -36,8 +40,6 @@ pa_pm10.style.color = colorFromAQI(aqiFromPM10(json.pa_pm10raw))
 pm10.style.color = colorFromAQI(aqiFromPM10(json.pm10raw))
 pm25.style.color = colorFromAQI(aqiFromPM25(json.pm25raw));
 
-pa_pres.innerHTML = Math.round(json.pa_pressure) + ' mbar'
-last_sample.innerHTML = json.sample_age
 //Indoor AQI Alerts
 const indoor_aqi_message = getAQIMessage(json.pm25aqi)
 const indoor_aqi_description = getAQIDescription(json.pm25aqi)
@@ -85,6 +87,10 @@ else if (pa_pm25aqi > 100) {
 }
 };
 
+/*
+format_date_string = function(date) {
+  return date.getMonth()+'/'+date.getDate()+'/'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()
+}*/
 
 //Fill summary stats at bottom of page
 update_sample_meta = function(json) {
@@ -92,6 +98,9 @@ update_sample_meta = function(json) {
   var pm10meta = document.getElementById('pm10meta')
   var tempmeta = document.getElementById('tempmeta')
   var hummeta = document.getElementById('hummeta')
+  //var dataperiod = document.getElementById('dataperiod')
+  //const data_period_text = json.sample_count+' samples since '+Date(json.measurement_time.min).substring(4,21)
+  //dataperiod.innerHTML = data_period_text
   pm25meta.innerHTML = 'Average: ' + json.pm25aqi.avg + '<br /> Lowest: ' + json.pm25aqi.min + '<br /> Hightest: '+ json.pm25aqi.max
   pm10meta.innerHTML = 'Average: ' + json.pm10aqi.avg + '<br /> Lowest: ' + json.pm10aqi.min + '<br /> Hightest: '+ json.pm10aqi.max
   if (units == 'C') {
@@ -111,6 +120,22 @@ update_charts = function(json) {
   //draw_pm_chart(d3_data)
   draw_pm_chart2(d3_data,chart_selection)
   //draw_temp_chart(d3_data)
+}
+
+toggle_temp_units = function() {
+  if (units == 'C') {
+    update_page(device_id, range, 'F')
+  } else {
+    update_page(device_id, range, 'C')
+  }
+}
+
+toggle_epa_corrections = function() {
+  if (epa_smoke_corrections == 1) {
+    update_page(device_id,range,units,0)
+  } else {
+    update_page(device_id,range,units,1)
+  }
 }
 
 //Run main update to fetch new data.
@@ -170,29 +195,10 @@ update_page = function(new_device_id = device_id, new_range = range, new_units =
     });
 
     //Update button active state
-    unit_c_button = document.getElementById('tempc')
-    unit_f_button = document.getElementById('tempf')
-    if (units == 'C') {
-      unit_c_button.className = unit_c_button.className.replace(' active','')+ ' active'
-      unit_f_button.className = unit_f_button.className.replace(' active','')
-    }
-    else {
-      unit_f_button.className = unit_f_button.className.replace(' active','')+' active'
-      unit_c_button.className = unit_c_button.className.replace(' active','')
-    }
     previous_range_button = document.getElementById('range'+previous_range)
     previous_range_button.className = previous_range_button.className.replace(' active', '')
     new_range_button = document.getElementById('range'+new_range)
     new_range_button.className = new_range_button.className.replace(' active', '')+ ' active'
-    smoke_on_button = document.getElementById('smoke_on')
-    smoke_off_button = document.getElementById('smoke_off')
-    if (epa_smoke_corrections == 1) {
-      smoke_on_button.className = unit_c_button.className.replace(' active','')+ ' active'
-      smoke_off_button.className = unit_f_button.className.replace(' active','')
-    } else {
-      smoke_off_button.className = unit_c_button.className.replace(' active','')+ ' active'
-      smoke_on_button.className = unit_f_button.className.replace(' active','')
-    }
     history.pushState(0,device_name,'/app/device/'+device_id+'/recent/'+range);
 }
 

@@ -18,6 +18,23 @@ db.sequelize = sequelize;
 
 db.devices = require('./device')(sequelize, Sequelize);
 db.samples = require('./sample')(sequelize,Sequelize);
-db.devices.hasMany(db.samples)
-db.samples.belongsTo(db.devices)
+db.users = require('./user')(sequelize,Sequelize);
+db.subscriptions = require('./subscription')(sequelize,Sequelize);
+db.notifications = require('./notification')(sequelize,Sequelize);
+
+
+db.devices.hasMany(db.samples);
+db.devices.hasMany(db.subscriptions);
+
+db.samples.belongsTo(db.devices);
+db.samples.hasMany(db.notifications);
+
+db.subscriptions.belongsTo(db.users);
+db.subscriptions.hasMany(db.notifications);
+db.subscriptions.belongsTo(db.devices);
+
+db.notifications.belongsTo(db.subscriptions);
+
+db.users.hasMany(db.subscriptions);
+
 module.exports = db;

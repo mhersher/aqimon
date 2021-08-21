@@ -11,6 +11,16 @@ block prepend head
   script(src='/javascripts/aqi_from_pm.js')
   script(src='/javascripts/d3_pmchart2.js')
 
+
+block breadcrumb
+  nav(aria-label='breadcrumb bg-light navbar-light')
+    ol(class='breadcrumb')
+      li(class='breadcrumb-item')
+        a(href='/app/') Home
+      li(class="breadcrumb-item")
+        a(href='../' id='device_name')
+      li(class='breadcrumb-item active' aria-current='page') Current Conditions
+
 block content
   div(class='row')
     div(class='col')

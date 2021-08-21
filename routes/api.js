@@ -1,11 +1,15 @@
 var express = require('express');
 var router = express.Router();
+var bodyParser = require('body-parser');
 var jwt = require('express-jwt');
 var jwksRsa = require('jwks-rsa');
 var dotenv = require('dotenv').config()
-//var helmet = require('helmet')
+var secured = require('../lib/secured_api');
 
 var api_controller = require('../controllers/apiController');
+
+// create application/json parser
+var jsonParser = bodyParser.json()
 
 var checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
@@ -40,10 +44,27 @@ router.get('/sample/:sample_id', api_controller.sample_details);
 router.get('/device/:device_id', api_controller.device_details);
 
 // Purpleair data for device
-router.get('/device/:device_id/purpleair', api_controller.purpleair)
+router.get('/device/:device_id/purpleair', api_controller.purpleair);
 
-// New sample
-router.use(checkJwt);
+// Create new subscription
+router.post('/subscription/new',secured(),api_controller.new_subscription);
 
-router.post('/sample', api_controller.new_sample);
+// Get subscription list
+router.get('/subscription/:device_id',secured(),api_controller.subscriptions);
+router.get('/subscription/',secured(),api_controller.subscriptions);
+
+// Create new subscription
+router.post('/subscription/delete/:subscription_id',secured(),api_controller.delete_subscription);
+
+// Create new profile
+router.post('/profile/new',secured(),jsonParser,api_controller.new_profile)
+
+// Read profile
+router.get('/profile/',secured(),api_controller.profile)
+
+// Update profile
+router.post('/profile/update',secured(),jsonParser,api_controller.update_profile)
+
+// New Sample
+router.post('/sample',checkJwt, api_controller.new_sample);
 module.exports = router

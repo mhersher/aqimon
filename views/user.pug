@@ -1,0 +1,60 @@
+extends layout
+
+block append head
+  script(src='/javascripts/subscribe.js')
+  script(src='/javascripts/profile_api.js')
+
+
+
+block breadcrumb
+  nav(aria-label='breadcrumb bg-light navbar-light')
+    ol(class='breadcrumb')
+      li(class='breadcrumb-item')
+        a(href='/app/') Home
+      li(class='breadcrumb-item active' aria-current='page') Profile
+
+block content
+  div(class='row')
+    h3 Profile
+  div(class='row')
+    form(action='/app/user' method='post')
+      div(class='row')
+        div(class='col form-group')
+          label(for='firstname') First Name
+          input(type='text' class='form-control' id='first_name' name='first_name' aria-describedby='emailHelp' placeholder='Fname')
+        div(class='col form-group')
+          label(for='lastname') Last Name
+          input(type='text' class='form-control' id='last_name' name='last_name' aria-describedby='emailHelp' placeholder='Lname')
+      div(class='row')
+        div(class='col form-group')
+          label(for='country') Country Code
+          select(id='country' class='form-control' name='country_code')
+            option 1
+            option 2
+        div(class='col form-group')
+          label(for='phone') Mobile Phone
+          input(type='text' class='form-control' id='phone' name='phone_number' aria-describedby='emailHelp' placeholder='Phone')
+      div(class='row')
+        div(class='col form-group')
+          label(for='units') Preferred Units
+          select(id='units' class='form-control')
+            option Imperial
+            option Metric
+      div(class='row')
+        div(class='col')
+          button(type="submit" class="btn btn-primary") Submit
+  div(class='row')
+    h3 Subscriptions
+  div(class='row')
+    div(class='col')
+      table(class='table table-hover', id='subscriptions_table')
+        tr
+          th Device
+          th Metric
+          th Alert on Worsening
+          th Alert Threshold
+          th Alert on Improving
+          th
+  script(src='/javascripts/user.js')
+  script.
+    initialize_profile()

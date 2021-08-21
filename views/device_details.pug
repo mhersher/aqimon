@@ -1,0 +1,74 @@
+extends layout
+block prepend head
+  script.
+    var device_id = !{device_id};
+    var device_name = ''
+    var units = 'F'
+    var epa_smoke_corrections = 1
+  script(src='/javascripts/aqi_from_pm.js')
+  script(src='/javascripts/d3_pmchart2.js')
+  script(src='/javascripts/subscribe.js')
+
+
+block breadcrumb
+  nav(aria-label='breadcrumb bg-light navbar-light')
+    ol(class='breadcrumb')
+      li(class='breadcrumb-item')
+        a(href='/app/') Home
+      li(class="breadcrumb-item")
+        a(href='../' id='device_name')
+      li(class='breadcrumb-item active' aria-current='page') Device Details
+
+block content
+  div(class='row bg-light')
+    div(class='col')
+      p(id='current_conditions')
+  div(class='row')
+    div(class='col')
+      h3 Historical Conditions (Not Yet Implemented)
+  div(class='row')
+    div(class='col' id='period_stats')
+      div(class='row' id='period_chooser')
+        p Date Range
+      div(class='row' id='Temperature')
+      div(class='row' id='Humidity')
+    div(class='col' id='lifetime_stats')
+      div(class='row')
+        p All Time
+      div(class='row' id='Air Quality')
+      div(class='row' id='Temperature')
+      div(class='row' id='Humidity')
+  if locals.user
+    div(class='row')
+      div(class='col')
+        h3 Subscribe to Alerts
+        div(class='row')
+          form(action='/api/subscription/new' method='post')
+            input(type='hidden', value=device_id name='device_id')
+            div(class='row')
+              div(class='col form-group')
+                label(for='metric') Metric
+                select(id='metric' class='form-control' name='metric')
+                  option pm2.5 aqi
+                  option pm10 aqi
+                  option temp
+                  option humidity
+              div(class='col')
+                div(class='form-check')
+                  input(class='form-check-input', type='checkbox', value='1', id='increasecheck', name='onincrease')
+                  label(class='form-check-label' for='increasecheck') AQI Increases
+                div(class='form-check')
+                  input(class='form-check-input', type='checkbox', value='1', id='decreasecheck', name='ondecrease')
+                  label(class='form-check-label' for='decreasecheck') AQI Decreases
+              div(class='col form-group')
+                label(for='threshold') Threshhold
+                select(id='threshold' class='form-control' name='threshold')
+                  option Moderate
+                  option Unhealthy for Sensitive Groups
+                  option Unhealthy
+                  option Very Unhealthy
+                  option Hazardous
+              div(class='col')
+                button(type="submit" class="btn btn-primary") Submit
+
+  script(src='/javascripts/device_details.js')

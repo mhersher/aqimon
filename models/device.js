@@ -27,6 +27,12 @@ module.exports = (sequelize, Sequelize) => {
     },
     nearest_purpleair: {
       type: Sequelize.STRING(30)
+    },
+    device_pair: {
+      type: Sequelize.INTEGER(5).UNSIGNED,
+      foreignKey: {
+        allowNull: true
+      }
     }
   },{underscored: true});
 

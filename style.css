@@ -1,0 +1,137 @@
+.sidebar-nav {
+    margin-top: 20px;
+    padding: 0;
+    list-style: none;
+}
+
+.chart-large {
+  width:100%;
+}
+
+.chart-medium {
+  width:80%;
+}
+
+/* AXES */
+/* ticks */
+.axis line{
+stroke: #706f6f;
+stroke-width: 0.5;
+shape-rendering: crispEdges;
+}
+
+/* axis contour */
+.axis path {
+stroke: #706f6f;
+stroke-width: 0.7;
+shape-rendering: crispEdges;
+}
+
+/* axis text */
+.axis text {
+fill: #2b2929;
+font-size: 120%;
+}
+
+/* LINE CHART */
+path.line-0 {
+    fill: none;
+    stroke: #ed3700;
+}
+
+path.line-1 {
+    fill: none;
+    stroke: #2b2929;
+    stroke-dasharray: 2;
+}
+
+path.line-2 {
+    fill: none;
+    stroke: #9c9c9c;
+    stroke-dasharray: 6;
+}
+
+.serie_label {
+  fill: #2b2929;
+  font-size: 60%;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+    fill: #ed3700;
+}
+
+.focus text {
+    font-size: 10px;
+}
+
+.tooltip {
+    fill: white;
+    stroke: #000;
+    opacity: 100;
+}
+
+.tooltip-date, .tooltip-pm25, .tooltip-pm10 {
+    font-weight: bold;
+}
+
+.tooltip-pm25 {
+    fill: #ed3700;
+}
+
+.tooltip-pm10 {
+    fill: #2b2929;
+}
+
+.gauge-background {
+  fill: #cccccc
+}
+
+.alert-moderate {
+  background-color:yellow;
+  color:#000;
+}
+
+.alert-usg {
+  background-color:rgb(255,126,0);
+  color:#fff;
+}
+
+.alert-unhealthy {
+  background-color:red;
+  color:#fff;
+}
+
+.alert-veryunhealthy {
+  background-color:rgb(143,63,151);
+  color:#fff;
+}
+
+.alert-hazardous {
+  background-color:rgb(126,0,35);
+  color:#fff;
+}
+
+.text-moderate {
+  color:rgb(230,200,0);
+}
+
+.text-usg {
+  color:rgb(255,126,0);
+}
+
+.text-unhealthy {
+  color:red;
+}
+
+.text-veryunhealthy {
+  color:rgb(143,63,151);
+}
+
+.text-hazardous {
+  color:rgb(126,0,35);
+}

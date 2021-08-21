@@ -125,7 +125,7 @@ draw_pm_chart2 = function(data,selection) {
       {offset: y(200) / dims.height, color: "rgb(143,63,151)"},
       {offset: y(150) / dims.height, color: "red"},
       {offset: y(100) / dims.height, color: "rgb(255,126,0)"},
-      {offset: y(50) / dims.height, color: "yellow"},
+      {offset: y(50) / dims.height, color: "rgb(230,200,0)"},
       {offset: y(0) / dims.height, color: "green"}
 
     ])
