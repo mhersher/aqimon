@@ -28,7 +28,7 @@ function getPurpleAirData(device_id) {
     Device.findByPk(device_id)
     .then(data => {
       const pa_devices = JSON.parse(data.dataValues.nearest_purpleair);
-      if (pa_devices = null) {
+      if (pa_devices == null) {
         reject('No PA Devices');
       }
       const purpleair_url = 'https://www.purpleair.com/json?show='+pa_devices.join('|')
