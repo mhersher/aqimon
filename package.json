@@ -29,7 +29,7 @@
     "passport-auth0": "^1.4.0",
     "pug": "^3.0.2",
     "querystring": "^0.2.1",
-    "sequelize": "^6.6.5",
+    "sequelize": "^6.29.0",
     "twilio": "^3.67.0",
     "url": "^0.11.0",
     "util": "^0.12.4"
